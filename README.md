@@ -14,7 +14,7 @@ withdraw:     /manage/withdraw/:id ,     method: patch,     body: {"amount": x}
 
 update credit:     /manage/credit/:id ,     method: patch, body: {"amount": x}
 
-transfer:     /manage/transfer ,     method: patch,     body: {"from": 000000000, "to": "000000000", "amount": x}
+transfer:     /manage/transfer ,     method: patch,     body: {"from": "000000000", "to": "000000000", "amount": x}
 
 
 
