@@ -3,6 +3,8 @@ const {
   getUsers,
   validateUserExist,
   addNewUser,
+  filterByCash,
+  filterByCredit,
 } = require("../data-massege/app.js");
 
 const usersRoute = express.Router();
@@ -35,6 +37,26 @@ usersRoute.post("/", (req, res) => {
     const users = getUsers();
     const user = validateUserExist(id, users);
     res.status(200).send(user);
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
+});
+
+usersRoute.get("/cash/:amount", (req, res) => {
+  try {
+    const amount = parseFloat(req.params.amount);
+    const users = filterByCash(amount);
+    res.status(200).send(users);
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
+});
+
+usersRoute.get("/credit/:amount", (req, res) => {
+  try {
+    const amount = parseFloat(req.params.amount);
+    const users = filterByCredit(amount);
+    res.status(200).send(users);
   } catch (error) {
     res.status(400).send({ error: error.message });
   }

@@ -92,6 +92,9 @@ const withdraw = (passportId, amount) => {
 
 const transfer = (fromId, toId, amount) => {
   const users = getUsers();
+  if (fromId === toId) {
+    throw new Error("you must insert diffrent acounts to be able to transfer");
+  }
   const from = validateUserExist(fromId, users);
   const to = validateUserExist(toId, users);
   if (amount < 0) {
@@ -104,6 +107,22 @@ const transfer = (fromId, toId, amount) => {
   to.cash += amount;
   saveUsers(users);
   return [from, to];
+};
+
+const filterByCash = (amount) => {
+  if (isNaN(amount)) {
+    throw new Error("amount must be a number");
+  }
+  const users = getUsers();
+  return users.filter((user) => user.cash >= amount);
+};
+
+const filterByCredit = (amount) => {
+  if (isNaN(amount)) {
+    throw new Error("amount must be a number");
+  }
+  const users = getUsers();
+  return users.filter((user) => user.credit >= amount);
 };
 
 // addNewUser("benjamin rotlevy", 300, 400, "208762195");
@@ -121,4 +140,6 @@ module.exports = {
   withdraw,
   updateCredit,
   transfer,
+  filterByCash,
+  filterByCredit,
 };
