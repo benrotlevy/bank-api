@@ -5,6 +5,8 @@ const {
   addNewUser,
   filterByCash,
   filterByCredit,
+  toggleActive,
+  filterByActiveAndCash,
 } = require("../data-massege/app.js");
 
 const usersRoute = express.Router();
@@ -56,6 +58,25 @@ usersRoute.get("/credit/:amount", (req, res) => {
   try {
     const amount = parseFloat(req.params.amount);
     const users = filterByCredit(amount);
+    res.status(200).send(users);
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
+});
+
+usersRoute.patch("/active/:id", (req, res) => {
+  try {
+    const user = toggleActive(req.params.id);
+    res.status(200).send(user);
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
+});
+
+usersRoute.get("/filter/cash", (req, res) => {
+  try {
+    const amount = parseFloat(req.body.amount);
+    const users = filterByActiveAndCash(req.body.active, amount);
     res.status(200).send(users);
   } catch (error) {
     res.status(400).send({ error: error.message });

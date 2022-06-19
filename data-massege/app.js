@@ -29,6 +29,7 @@ const addNewUser = (name, passportId, cash, credit) => {
     cash,
     credit,
     passportId,
+    isActive: true,
   };
   users.push(newUser);
   saveUsers(users);
@@ -57,9 +58,16 @@ const validateUserExist = (id, users) => {
   return user;
 };
 
+const handleLockedUser = (user) => {
+  if (!user.isActive) {
+    throw new Error("user must be active to be able to action");
+  }
+};
+
 const updateCredit = (id, credit) => {
   const users = getUsers();
   const user = validateUserExist(id, users);
+  handleLockedUser(user);
   if (credit < 0) {
     throw new Error("credit must be positive number or zero");
   }
@@ -70,6 +78,7 @@ const updateCredit = (id, credit) => {
 const deposit = (passportId, amount) => {
   const users = getUsers();
   const user = validateUserExist(passportId, users);
+  handleLockedUser(user);
   if (amount <= 0) {
     throw new Error("amount must be positive number");
   }
@@ -80,6 +89,7 @@ const deposit = (passportId, amount) => {
 const withdraw = (passportId, amount) => {
   const users = getUsers();
   const user = validateUserExist(passportId, users);
+  handleLockedUser(user);
   if (amount <= 0) {
     throw new Error("amount must be positive number");
   }
@@ -96,6 +106,7 @@ const transfer = (fromId, toId, amount) => {
     throw new Error("you must insert diffrent acounts to be able to transfer");
   }
   const from = validateUserExist(fromId, users);
+  handleLockedUser(from);
   const to = validateUserExist(toId, users);
   if (amount < 0) {
     throw new Error("amount must be positive number");
@@ -125,6 +136,30 @@ const filterByCredit = (amount) => {
   return users.filter((user) => user.credit >= amount);
 };
 
+const toggleActive = (id) => {
+  const users = getUsers();
+  const user = validateUserExist(id, users);
+  user.isActive = !user.isActive;
+  saveUsers(users);
+  return user;
+};
+
+const filterByActiveAndCash = (active, amount) => {
+  if (active === undefined || !amount) {
+    throw new Error("you must insert active and amount");
+  }
+  if (isNaN(amount)) {
+    throw new Error("amount must be a number");
+  }
+  if (typeof active !== "boolean") {
+    throw new Error("active must be a boolean");
+  }
+  const users = getUsers();
+  return users.filter((user) => {
+    return user.isActive === active && user.cash >= amount;
+  });
+};
+
 // addNewUser("benjamin rotlevy", 300, 400, "208762195");
 // addNewUser("yossi rotlevy", "208762196");
 // deposit("208762195", 300);
@@ -142,4 +177,6 @@ module.exports = {
   transfer,
   filterByCash,
   filterByCredit,
+  toggleActive,
+  filterByActiveAndCash,
 };
