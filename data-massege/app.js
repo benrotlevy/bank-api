@@ -45,7 +45,7 @@ const validateUser = (name, cash, credit, passportId) => {
   if (credit < 0) {
     throw new Error("credit cant be negative");
   }
-  if (passportId.length !== 9) {
+  if (!passportId || passportId.length !== 9) {
     throw new Error("Id must be a 9 digit string");
   }
 };
